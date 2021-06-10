@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo pacman -S vim cmake gcc python3 mono go nodejs jdk-openjdk npm zathura zathura-pdf-mupdf
 cp .vimrc ~/
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
