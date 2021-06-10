@@ -30,7 +30,7 @@ syntax on
 "colorscheme modified
 set rnu
 let g:ycm_key_list_select_completion = ['<Down>']
-let g:UltiSnipsSnippetDirectories = ['/home/juans/.vim/ultisnips']
+let g:UltiSnipsSnippetDirectories = ['~/.vim/ultisnips']
 let g:UltiSnipsExpandTrigger="<Tab>"
 let g:UltiSnipsJumpForwardTrigger="<Tab>"
 set list
