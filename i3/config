@@ -434,8 +434,8 @@ font pango:SF Pro Rounded Light 13
 # USER APPLICATIONS TO START AT BOOT
 
 #exec_always --no-startupjid xrandr --output DisplayPort-0 --off --output DisplayPort-1 --off --output DisplayPort-2 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output HDMI-A-0 --mode 1920x1080 --pos 1920x0 --rotate normal
-exec_always --no-startup-id xrandr --output DisplayPort-0 --off --output DisplayPort-1 --off --output DisplayPort-2 --primary --mode 1920x1080 --pos 1280x0 --rotate normal --output HDMI-A-0 --mode 1280x1024 --pos 0x0 --rotate normal
-exec_always --no-startup-id autorandr --change
+exec_always --no-startup-id sleep 0.2 && xrandr --output DisplayPort-0 --off --output DisplayPort-1 --off --output DisplayPort-2 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output HDMI-A-0 --mode 1920x1080 --pos 0x87 --rotate normal
+#exec_always --no-startup-id autorandr --change
 exec_always --no-startup-id sleep 0.5 &&  nitrogen --restore
 exec_always --no-startup-id ibus-daemon -drxR
 
@@ -506,7 +506,7 @@ exec --no-startup-id volumeicon
 
 #feh sets wallpaper
 #exec --no-startup-id feh --bg-fill /usr/share/backgrounds/arcolinux/arco-wallpaper.jpg &
-exec --no-startup-id feh --bg-fill /usr/share/backgrounds/arcolinux/koi-fishes-1920x1080.png
+#exec --no-startup-id feh --bg-fill /usr/share/backgrounds/arcolinux/koi-fishes-1920x1080.png
 #exec_always --no-startup-id feh --randomize --bg-fill /usr/share/backgrounds/Nord/*
 #Polybar
 exec --no-startup-id polybar mainbar-i3

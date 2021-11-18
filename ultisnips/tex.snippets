@@ -7,7 +7,74 @@ def comment():
 def env(name):
 	[x,y] = vim.eval("vimtex#env#is_inside('" + name + "')") 
 	return x != '0' and y != '0'
+def create_matrix_placeholders(snip):
+	# Create anonymous snippet body
+	anon_snippet_body = ""
+
+	# Get start and end line number of expanded snippet
+	start = snip.snippet_start[0]
+	end = snip.snippet_end[0]
+
+  # Append current line into anonymous snippet
+	for i in range(start, end + 1):
+		anon_snippet_body += snip.buffer[i]
+		anon_snippet_body += "" if i == end else "\n"
+
+	# Delete expanded snippet line till second to last line
+	for i in range(start, end):
+		del snip.buffer[start]
+
+	# Empty last expanded snippet line while preserving the line
+	snip.buffer[start] = ''
+
+	# Expand anonymous snippet
+	snip.expand_anon(anon_snippet_body)
+
+def create_matrix(cols, rows, sep, start, end):
+	res = ""
+	placeholder = 1
+	for _ in range(0, int(rows)):
+		res += start + f"${placeholder} "
+		placeholder += 1
+		for _ in range(0, int(cols) - 1):
+			res += sep + f" ${placeholder} "
+			placeholder += 1
+		res += end
+	return res[:-1]
 endglobal
+
+post_jump "create_matrix_placeholders(snip)"
+snippet 'mat(\d+),(\d+)' "LaTeX array" br
+\[
+\begin{matrix}
+`!p
+snip.rv = create_matrix(match.group(1), match.group(2), "&", "", "\\\\\\\\\n")
+`
+\end{matrix}
+\]
+endsnippet
+
+post_jump "create_matrix_placeholders(snip)"
+snippet 'pmat(\d+),(\d+)' "LaTeX array" br
+\[
+\begin{pmatrix}
+`!p
+snip.rv = create_matrix(match.group(1), match.group(2), "&", "", "\\\\\\\\\n")
+`
+\end{pmatrix}
+\]
+endsnippet
+
+post_jump "create_matrix_placeholders(snip)"
+snippet 'bmat(\d+),(\d+)' "LaTeX array" br
+\[
+\begin{bmatrix}
+`!p
+snip.rv = create_matrix(match.group(1), match.group(2), "&", "", "\\\\\\\\\n")
+`
+\end{bmatrix}
+\]
+endsnippet
 
 
 snippet template "Basic template" b
@@ -38,15 +105,10 @@ snippet template "Basic template" b
 \end{document}
 endsnippet
 
-snippet b "begin{} / end{}" b
+snippet '^\s?b' "begin{} / end{}" r
 \\begin{$1}
 	$0
 \\end{$1}
-endsnippet
-
-priority 100
-snippet ... "ldots" iA
-\ldots
 endsnippet
 
 snippet table "Table environment" b
@@ -90,10 +152,12 @@ else:
 `$2
 endsnippet
 
+#DEBUG
+
 snippet dm "Math" wA
 \[
-${1:${VISUAL}}
-\] $0
+$1
+\]
 endsnippet
 
 context "math()"
@@ -158,19 +222,19 @@ snippet != "not equals" iA
 \neq 
 endsnippet
 
-snippet lr( "left( right)" i
+snippet lr( "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
 endsnippet
 
-snippet lr| "left| right|" i
+snippet lr| "left| right|" iA
 \left| ${1:${VISUAL}} \right| $0
 endsnippet
 
-snippet lr{ "left\{ right\}" i
+snippet lr{ "left\{ right\}" iA
 \left\\{ ${1:${VISUAL}} \right\\} $0
 endsnippet
 
-snippet lr[ "left[ right]" i
+snippet lr[ "left[ right]" iA
 \left[ ${1:${VISUAL}} \right] $0
 endsnippet
 
@@ -179,38 +243,48 @@ snippet lra "leftangle rightangle" iA
 endsnippet
 
 context "math()"
-snippet sum "sum" wA
-\sum_{$1}^{$2} $0
+snippet '(\\?)int' "integral" riA
+\int_{$1}^{$2} $3 \text{d}$0
 endsnippet
 
 context "math()"
-snippet \sum "sum" A
-\sum_{$1}^{$2} $0
+snippet '(\\?)lim' "limit" rwA
+\lim _ {$1 \to $2} $0 
 endsnippet
 
 context "math()"
-snippet \int "int" A
-\int_{$1}^{$2} $0
+snippet '(,)(\s?)(\n?)(\s?)\.\.\.' "dots" riA
+`!p snip.rv = match.group(1)` \ldots
 endsnippet
 
 context "math()"
-snippet int "int" wA
-\int_{$1}^{$2} $0
+snippet '(\+|\-|\\cdot|\\times)(\s?)(\n?)(\s?)\.\.\.' "dots" riA
+`!p snip.rv = match.group(1)` \cdots
+endsnippet
+
+#context "math()"
+#snippet '([^\\]|^)(\\?)sum' "sum" rwA
+#`!p snip.rv = match.group(1)`\sum _ {$1} ^ {$2} $0 
+#endsnippet
+
+context "math()"
+snippet '(\\?)sum' "sum" rwA
+\sum _ {$1} ^ {$2} $0 
 endsnippet
 
 context "math()"
-snippet lim "limit" wA
-\lim_{$1 \to $2} $0 
-endsnippet
-
-context "math()"
-snippet \lim "limit" A
-\lim_{$1 \to $2} $0 
+snippet := "mathbb" iA
+\coloneq
 endsnippet
 
 context "math()"
 snippet bb "mathbb" wA
 \mathbb{$1} $0
+endsnippet
+
+context "math()"
+snippet cal "int" wA
+\mathcal{$1}$0
 endsnippet
 
 context "math()"
@@ -314,6 +388,9 @@ $0
 \end{prop}
 endsnippet
 
+snippet ita "example" 
+\textit{$1}$0
+endsnippet
 
 
 

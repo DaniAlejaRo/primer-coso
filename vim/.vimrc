@@ -22,6 +22,7 @@ Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'ycm-core/YouCompleteMe'
+Plug 'iandwelker/rose-pine-vim'
 call plug#end()
 "Status bar
 set laststatus=2
