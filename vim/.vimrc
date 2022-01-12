@@ -2,27 +2,29 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'sainnhe/sonokai' 
 "Plug 'vim-airline/vim-airline'
+Plug 'JuliaEditorSupport/julia-vim'
+Plug 'KeitaNakamura/tex-conceal.vim'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimfiler.vim'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'arcticicestudio/nord-vim'
 Plug 'christoomey/vim-system-copy'
+Plug 'dense-analysis/ale'
 Plug 'habamax/vim-godot'
+Plug 'iandwelker/rose-pine-vim'
 Plug 'itchyny/lightline.vim'
 Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
-Plug 'JuliaEditorSupport/julia-vim'
+Plug 'jez/vim-better-sml'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'KeitaNakamura/tex-conceal.vim'
 Plug 'lervag/vimtex'
 Plug 'mhartington/oceanic-next'
 Plug 'plasticboy/vim-markdown'
 Plug 'preservim/nerdtree'
-Plug 'Shougo/unite.vim'
-Plug 'Shougo/vimfiler.vim'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'ycm-core/YouCompleteMe'
-Plug 'iandwelker/rose-pine-vim'
 call plug#end()
 "Status bar
 set laststatus=2
@@ -150,6 +152,9 @@ inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" 
 nnoremap <C-f> : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR> :! python3 ~/Documents/Scripts/inkscape-shortcut-manager/main.py & <CR> <CR>
 nnoremap <F3> mA
 nnoremap <F4> 'A
+
+"Compile options
+autocmd FileType sml nnoremap <C-c> :vsplit term://bash sml % <CR>
 
 
 "To enable substitute&paste with F2, change the last two function with the following in  .vim/plugged/vim-easyclip/autoload/EasyClip/Substitute.vim 
