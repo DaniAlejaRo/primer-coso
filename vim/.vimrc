@@ -2,30 +2,56 @@
 call plug#begin('~/.vim/plugged')
 "Plug 'sainnhe/sonokai' 
 "Plug 'vim-airline/vim-airline'
-Plug 'JuliaEditorSupport/julia-vim'
-Plug 'KeitaNakamura/tex-conceal.vim'
-Plug 'Shougo/unite.vim'
-Plug 'Shougo/vimfiler.vim'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
 Plug 'arcticicestudio/nord-vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'dense-analysis/ale'
-Plug 'habamax/vim-godot'
-Plug 'iandwelker/rose-pine-vim'
 Plug 'itchyny/lightline.vim'
 Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
 Plug 'jez/vim-better-sml'
+Plug 'juansegaes/vim-qdpython'
+Plug 'JuliaEditorSupport/julia-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'KeitaNakamura/tex-conceal.vim'
+Plug 'kmonad/kmonad-vim'
 Plug 'lervag/vimtex'
 Plug 'mhartington/oceanic-next'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'plasticboy/vim-markdown'
 Plug 'preservim/nerdtree'
+Plug 'rust-lang/rust.vim'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'voldikss/vim-floaterm'
 Plug 'ycm-core/YouCompleteMe'
 call plug#end()
+
+"call plug#begin('~/Documents')
+"Plug 'vim-qdpython'
+"call plug#end()
+"
+"configuration for Julia language server
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = {
+\   'julia': ['julia', '--startup-file=no', '--history-file=no', '-e', '
+\       using LanguageServer;
+\       using Pkg;
+\       import StaticLint;
+\       import SymbolServer;
+\       env_path = dirname(Pkg.Types.Context().env.project_file);
+\       
+\       server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path, "");
+\       server.runlinter = true;
+\       run(server);
+\   ']
+\ }
+
+
+
+
 "Status bar
 set laststatus=2
 let g:lightline = {
@@ -115,7 +141,7 @@ endif
 
 "sets the cholorscheme
 "colorscheme nord
-colorscheme nord
+colorscheme OceanicNext
 "Disables beeping
 set belloff=all
 "Set working directory to the current file
@@ -150,35 +176,35 @@ autocmd FileType tex  inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 "Inkscape figures
 inoremap <C-f> <Esc>: silent exec '.!inkscape-figures create "'.getline('.').'" "'.b:vimtex.root.'/figures/"'<CR><CR>:w<CR> :! python3 ~/Documents/Scripts/inkscape-shortcut-manager/main.py & <CR> <CR>
 nnoremap <C-f> : silent exec '!inkscape-figures edit "'.b:vimtex.root.'/figures/" > /dev/null 2>&1 &'<CR><CR>:redraw!<CR> :! python3 ~/Documents/Scripts/inkscape-shortcut-manager/main.py & <CR> <CR>
-nnoremap <F3> mA
-nnoremap <F4> 'A
+
+"Map f3 to open a terinal in vsplit
+nnoremap <F3> :vsplit term://bash<CR>i
 
 "Compile options
-autocmd FileType sml nnoremap <C-c> :vsplit term://bash sml % <CR>
-
-
-"To enable substitute&paste with F2, change the last two function with the following in  .vim/plugged/vim-easyclip/autoload/EasyClip/Substitute.vim 
-"function! EasyClip#Substitute#SetDefaultBindings()
-"
-"    let bindings =
-"    \ [
-"    \   ['<F2>',  '<plug>SubstituteOverMotionMap',  'n',  1],
-"    \   ['g<F2>',  '<plug>G_SubstituteOverMotionMap',  'n',  1],
-"    \   ['<F2><F2>',  '<plug>SubstituteLine',  'n',  1],
-"    "\   ['<F2>',  '<plug>XEasyClipPaste',  'x',  1],
-"    \   ['<F2>$',  '<plug>SubstituteToEndOfLine',  'n',  1],
-"    "\   ['gS',  '<plug>G_SubstituteToEndOfLine',  'n',  1],
-"    \ ]
-"
-"    for binding in bindings
-"        call call("EasyClip#AddWeakMapping", binding)
-"    endfor
-"endfunction
-"
-"function! EasyClip#Substitute#Init()
-"
-"    "if g:EasyClipUseSubstituteDefaults
-"        call EasyClip#Substitute#SetDefaultBindings()
-"    "endif
-"endfunction
-
+tnoremap <Esc> <C-\><C-n>
+let g:ale_linters = {'rust': ['rust-analyzer','rustc'],'julia': ['languageserver']}
+"if has('nvim-0.5')
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = { "python", "cpp", "python3" , "julia" , "rust" }, -- Add more lannguages as needed
+    additional_vim_regex_highlighting = vim.bo.filetype == "latex",
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn", -- set to `false` to disable one of the mappings
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
+  indent = {
+    enable = true
+  }
+}
+EOF
+"endif
+"Copilot accept with Crl-J
+imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
